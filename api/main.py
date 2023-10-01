@@ -42,8 +42,8 @@ HEADER_NAME = "Cadmium"
 async def index():
     return "Hello"
 
-from a2wsgi import ASGIMiddleware
-WSGI_APP = ASGIMiddleware(app)
+from a2wsgi import WSGIMiddleware
+ASGI_APP = WSGIMiddleware(app)
 
 if __name__ == "__main__":
     run("server.api:app", host="0.0.0.0", port=3000, reload=False)
