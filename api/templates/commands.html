@@ -1,0 +1,25 @@
+{% include 'header.html' %}
+
+{% block content %}
+<table class="table table-dark">
+    <thead>
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">Command Name</th>
+        <th scope="col">Command Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        {% for command in commands %}
+      <tr>
+        <th scope="row">{{ commands.index(command) + 1 }}</th>
+        <td>{{ command[0].strip() }}</td>
+        <td>{{ command[1].strip() }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}
+
+
+{% include 'footer.html' %}
