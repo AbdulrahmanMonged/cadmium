@@ -22,20 +22,23 @@ HEADER_NAME = "Cadmium"
 
 # asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
 
-@app.route("/")
-async def index():
-    return await render_template("index.html", header_name=HEADER_NAME, signed_in=False)
+# @app.route("/")
+# async def index():
+#     return await render_template("index.html", header_name=HEADER_NAME, signed_in=False)
 
-@app.route("/commands")
-async def commands():
-    async with await psycopg.AsyncConnection.connect(host=host, dbname=database, user=user, password=password, port=port) as db:
-        async with db.cursor() as cursor:
-            await cursor.execute("SELECT COMMAND_NAME, COMMAND_DESCRIPTION FROM COMMANDS")
-            results = await cursor.fetchall()
-            for command in results:
-                print(command[0].strip(" "), command[1].strip(" "))   
-    return await render_template("commands.html", header_name="Commands", signed_in=False, commands = results)
+# @app.route("/commands")
+# async def commands():
+#     async with await psycopg.AsyncConnection.connect(host=host, dbname=database, user=user, password=password, port=port) as db:
+#         async with db.cursor() as cursor:
+#             await cursor.execute("SELECT COMMAND_NAME, COMMAND_DESCRIPTION FROM COMMANDS")
+#             results = await cursor.fetchall()
+#             for command in results:
+#                 print(command[0].strip(" "), command[1].strip(" "))   
+#     return await render_template("commands.html", header_name="Commands", signed_in=False, commands = results)
 
 # app.run(debug=True)
+@app.route("/")
+async def index():
+    return "Hello"
 if __name__ == "__main__":
     run("server.api:app", host="0.0.0.0", port=3000, reload=False)
