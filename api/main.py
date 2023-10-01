@@ -19,7 +19,7 @@ app = Quart(__name__)
 app.config['EXPLAIN_TEMPLATE_LOADING'] = True
 HEADER_NAME = "Cadmium"
 
-asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
+# asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
 
 @app.route("/")
 async def index():
