@@ -37,7 +37,10 @@ HEADER_NAME = "Cadmium"
 #     return await render_template("commands.html", header_name="Commands", signed_in=False, commands = results)
 
 # app.run(debug=True)
+
 @app.route("/")
 async def index():
     return "Hello"
 
+if __name__ == "__main__":
+    run("server.api:app", host="0.0.0.0", port=3000, reload=False)
