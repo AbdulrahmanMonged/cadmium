@@ -40,5 +40,4 @@ HEADER_NAME = "Cadmium"
 @app.route("/")
 async def index():
     return "Hello"
-if __name__ == "__main__":
-    run("server.api:app", host="0.0.0.0", port=3000, reload=False)
+
