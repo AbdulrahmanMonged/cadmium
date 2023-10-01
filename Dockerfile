@@ -8,9 +8,9 @@ ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 
 # install the requirements
-COPY requirements.txt /app
+COPY api/requirements.txt /app
 RUN --mount=type=cache,target=/root/.cache/pip \
-    pip3 install -r requirements.txt
+    pip3 install -r api/requirements.txt
 
 COPY . .
 
