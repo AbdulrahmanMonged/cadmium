@@ -35,4 +35,4 @@ async def commands():
                 print(command[0].strip(" "), command[1].strip(" "))   
     return await render_template("commands.html", header_name="Commands", signed_in=False, commands = results)
 
-app.run(debug=True)
+# app.run(debug=True)
