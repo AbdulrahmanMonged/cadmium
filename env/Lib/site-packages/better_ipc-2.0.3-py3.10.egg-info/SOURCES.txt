@@ -1,0 +1,14 @@
+LICENSE
+README.md
+setup.cfg
+setup.py
+better_ipc.egg-info/PKG-INFO
+better_ipc.egg-info/SOURCES.txt
+better_ipc.egg-info/dependency_links.txt
+better_ipc.egg-info/requires.txt
+better_ipc.egg-info/top_level.txt
+discord/ext/ipc/__init__.py
+discord/ext/ipc/client.py
+discord/ext/ipc/errors.py
+discord/ext/ipc/objects.py
+discord/ext/ipc/server.py

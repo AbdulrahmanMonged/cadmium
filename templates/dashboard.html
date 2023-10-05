@@ -1,0 +1,22 @@
+{% include "header.html" %}
+{% block content %}
+<div class="title">Discord servers You Own</div>
+<div class="cards">
+    {% for guild in guilds %}
+    <div class="card" style="width: 18rem;">
+        {% if guild.icon_url != None %}
+        <img src="{{ guild.icon_url }}" class="card-img-top guildimg" alt="guild img" style="height: 10rem;">
+        {% else %}
+        <img src="{{ url_for('static', filename='img/discord-logo.png') }}" class="card-img-top guildimg" alt="guild img">
+        {% endif %}
+    <div class="card-body">
+        <h5 class="card-title username">{{ guild.name }}</h5>
+        <p class="card-text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent ex ante, mattis vel dapibus vel, tempor facilisis justo. Vivamus dignissim ut nisi eu consequat.</p>
+        <a href="#" class="btn btn-primary">Edit Server</a>
+    </div>
+</div>
+{% endfor %}
+</div>
+</div>
+  {% endblock %}
+{% include "footer.html" %}
