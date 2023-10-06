@@ -1,6 +1,9 @@
 {% include 'header.html' %}
 
 {% block content %}
+{% for commands in response%}
+<div class="container-fluid text-center">
+<h1 class="display-6 username">{{ commands }}</h1>
 <table class="table table-dark">
     <thead>
       <tr>
@@ -10,15 +13,17 @@
       </tr>
     </thead>
     <tbody>
-        {% for command in commands %}
+        {% for command in response[commands] %}
       <tr>
-        <th scope="row">{{ commands.index(command) + 1 }}</th>
-        <td>{{ command[0].strip() }}</td>
-        <td>{{ command[1].strip() }}</td>
+        <th scope="row">{{ response[commands].index(command) + 1 }}</th>
+        <td>#{{ command[0] }}</td>
+        <td>{{ command[1] }}</td>
       </tr>
       {% endfor %}
     </tbody>
   </table>
+</div>
+{% endfor %}
 {% endblock %}
 
 

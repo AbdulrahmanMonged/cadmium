@@ -1,42 +1,46 @@
-from quart import Quart, render_template, redirect, url_for
+from quart import Quart, render_template, redirect, url_for, request
 from quart_discord import DiscordOAuth2Session, requires_authorization, Unauthorized
 import psycopg
-
+import asyncio
 import os
-from urllib.parse import urlparse
 from uvicorn import run
 from discord.ext.ipc import Client
+from forms import PrefixForm
 
+
+WTF_CSRF_ENABLED = True
+WTF_CSRF_CHECK_DEFAULT = False
+WTF_CSRF_SECRET_KEY = os.getenv("CSRF")
+WTF_I18N_ENABLED = False
 
 DB_URI = os.getenv("URI")
-db_uri = urlparse(DB_URI)
-
-host = db_uri.hostname
-database = db_uri.path[1:]
-user = db_uri.username
-password = db_uri.password
-port= db_uri.port
 
 app = Quart(__name__)
-ipc_client = Client(secret_key="Bodyy")
+app.config['WTF_CSRF_ENABLED'] = WTF_CSRF_ENABLED
+app.config['WTF_CSRF_CHECK_DEFAULT'] = WTF_CSRF_CHECK_DEFAULT
+app.config['WTF_CSRF_SECRET_KEY'] = WTF_CSRF_SECRET_KEY
+app.config['WTF_I18N_ENABLED'] = WTF_I18N_ENABLED
+
+ipc = Client(host='135.125.205.175', secret_key="Bodyy")
 
 app.config['EXPLAIN_TEMPLATE_LOADING'] = True
-app.config['SECRET_KEY'] = "test123"
+app.config['SECRET_KEY'] = os.getenv("SEC")
 app.config['DISCORD_CLIENT_ID'] = 1130152470627229858
-app.config['DISCORD_CLIENT_SECRET'] = os.getenv("CLIENT_SECRET")
+app.config['DISCORD_CLIENT_SECRET'] = os.getenv("C_SEC")
 app.config['DISCORD_REDIRECT_URI'] = "http://135.125.205.175:5000/callback"
 
 HEADER_NAME = "Cadmium"
 discord = DiscordOAuth2Session(app)
 #asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
-signed_in = False
-@app.route("/")
+
+
+@app.route("/", methods=['GET', 'POST'])
 async def home():
     user = None
+    response = await ipc.request("get_numbers")
     if await discord.authorized:
         user = await discord.fetch_user()
-
-    return await render_template("index.html", header_name=HEADER_NAME, signed_in=await discord.authorized, user = user)
+    return await render_template("index.html", header_name=HEADER_NAME, signed_in=await discord.authorized, user = user, u_num=response.response['users'],g_num=response.response['guilds'],c_num=response.response['channels'])
 
 @app.route('/logout')
 async def logout():
@@ -46,13 +50,10 @@ async def logout():
 @app.route("/commands")
 async def commands():
     user = None
+    response = await ipc.request("get_commands")
     if await discord.authorized:
         user = await discord.fetch_user()
-    async with await psycopg.AsyncConnection.connect(DB_URI) as db:
-        async with db.cursor() as cursor:
-            await cursor.execute("SELECT COMMAND_NAME, COMMAND_DESCRIPTION FROM COMMANDS")
-            results = await cursor.fetchall()
-    return await render_template("commands.html", header_name="Commands", signed_in=await discord.authorized, commands = results, user = user)
+    return await render_template("commands.html", header_name="Commands", signed_in=await discord.authorized, response = response.response, user = user)
 
 @app.route("/about")
 async def about():
@@ -67,9 +68,30 @@ async def about():
 async def dashboard():
     user = await discord.fetch_user()
     guilds = await user.fetch_guilds()
-    bot_guilds = await ipc_client.request("get_guilds")
-    common_guilds = [guild for guild in guilds if guild.id in bot_guilds]
+    bot_guilds = await ipc.request("get_guilds")
+    common_guilds = [guild for guild in guilds if guild.id in bot_guilds.response['data'] and guild.permissions.manage_guild == True]
     return await render_template("dashboard.html", header_name="Dashboard", user = user ,  signed_in = await discord.authorized, guilds=common_guilds)
+
+
+@requires_authorization
+@app.route("/edit/<int:id>", methods=["GET", "POST"])
+async def editserver(id):
+    form = await PrefixForm.create_form(form_data=PrefixForm)
+    user = await discord.fetch_user()
+    guilds = await user.fetch_guilds()
+    current_guild = [guild for guild in guilds if guild.id == id]
+    valid = await form.validate_on_submit()
+    print("Before")
+    async with await psycopg.AsyncConnection.connect(DB_URI) as db:
+        async with db.cursor() as cursor:
+            await cursor.execute("SELECT GUILD_PREFIX FROM GUILD where GUILD_ID = %s", (id,))
+            results = await cursor.fetchone()
+            current_prefix = results[0].strip(" ")
+            if await form.validate_on_submit():
+                await cursor.execute("UPDATE GUILD set GUILD_PREFIX = %s where GUILD_ID = %s", (form.prefix.data, id,))
+                return redirect(url_for("editserver", id=id))
+    return await render_template("editserver.html", header_name="Edit Server", user = user ,  signed_in = await discord.authorized, form=form, current_prefix=current_prefix, valid = valid, current_guild=current_guild[0])
+
 
 @app.route("/login")
 async def login():

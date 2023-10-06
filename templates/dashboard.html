@@ -1,21 +1,28 @@
 {% include "header.html" %}
 {% block content %}
-<div class="title">Discord servers You Own</div>
-<div class="cards">
+<div class="title username text-center">Discord servers You Own</div>
+<div class="container-fluid px-5">
+<div class="row justify-content-center">
     {% for guild in guilds %}
-    <div class="card" style="width: 18rem;">
+    <div class="col-lg-4 m-3">
+    <div class="card text-center h-60 border-light mb-5 p-0"  style="width: 18rem;">
         {% if guild.icon_url != None %}
-        <img src="{{ guild.icon_url }}" class="card-img-top guildimg" alt="guild img" style="height: 10rem;">
+        <img src="{{ guild.icon_url }}" class="card-img-top img-fluid rounded guildimg" alt="guild img" style="height: 10rem;">
         {% else %}
-        <img src="{{ url_for('static', filename='img/discord-logo.png') }}" class="card-img-top guildimg" alt="guild img">
+        <img src="{{ url_for('static', filename='img/discord-logo.png') }}" class="card-img-top img-fluid rounded guildimg" alt="guild img">
         {% endif %}
     <div class="card-body">
-        <h5 class="card-title username">{{ guild.name }}</h5>
-        <p class="card-text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent ex ante, mattis vel dapibus vel, tempor facilisis justo. Vivamus dignissim ut nisi eu consequat.</p>
-        <a href="#" class="btn btn-primary">Edit Server</a>
+        <p class="username" style="font-size: 18px !important; font-weight: 600 !important; color: #AD91FF !important;">{{ guild.name }}</p>
+        <a href="{{ url_for('editserver', id = guild.id) }}" class="btn btn-primary">Edit Server</a>
     </div>
 </div>
+</div>
+{% if (guilds.index(guild) + 1) % 2 == 0 %}
+<div class="w-100"></div>
+{% endif %}
 {% endfor %}
+
+</div>
 </div>
 </div>
   {% endblock %}

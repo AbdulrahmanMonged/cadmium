@@ -1,0 +1,17 @@
+{% include "header.html" %}
+{% block content %}
+
+<form method="POST" class="align-items-center">
+    {{ form.csrf_token }}
+
+    <div class="container-fluid mb-3 w-50 p-3">
+        <p class = "username"> Changing Prefix for <span class="h5"><strong>{{ current_guild.name }}</strong></span> </p>
+        <p class = "username"> CURRENT PREFIX IS: {{ current_prefix }} </p>
+        {{ form.prefix(type='text', class='form-control', placeholder="Prefix", aria_label="Prefix") }}
+        <input type="submit" value="Change" class="btn btn-primary">
+    </div>
+        
+</form>
+{% endblock %}
+
+{% include "footer.html" %}
