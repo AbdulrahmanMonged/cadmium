@@ -27,7 +27,7 @@ app.config['EXPLAIN_TEMPLATE_LOADING'] = True
 app.config['SECRET_KEY'] = os.getenv("SEC")
 app.config['DISCORD_CLIENT_ID'] = 1130152470627229858
 app.config['DISCORD_CLIENT_SECRET'] = os.getenv("C_SEC")
-app.config['DISCORD_REDIRECT_URI'] = "http://135.125.205.175:5000/callback"
+app.config['DISCORD_REDIRECT_URI'] = "http://135.125.205.175:80/callback"
 
 HEADER_NAME = "Cadmium"
 discord = DiscordOAuth2Session(app)
